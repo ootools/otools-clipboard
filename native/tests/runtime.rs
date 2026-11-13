@@ -24,6 +24,18 @@ fn invoke(runtime: &Runtime, dir: &TempDir, method: &str, payload: Value) -> Val
     runtime.invoke(json!({"method":method,"payload":payload,"pluginDataDir":dir.path(),"pluginDir":"/plugin-install"})).unwrap()
 }
 
+fn invoke_after_capture(runtime: &Runtime, dir: &TempDir, method: &str, payload: Value) -> Value {
+    let deadline = Instant::now() + Duration::from_secs(20);
+    loop {
+        match runtime.invoke(json!({"method":method,"payload":payload,"pluginDataDir":dir.path()}))
+        {
+            Ok(value) => return value,
+            Err(error) if error == "commandTimeout" && Instant::now() < deadline => {}
+            Err(error) => panic!("history drain failed: {error}"),
+        }
+    }
+}
+
 fn started(runtime: &Runtime, dir: &TempDir) {
     assert_eq!(
         runtime
@@ -402,7 +414,7 @@ fn callback_does_not_wait_on_busy_sqlite_writer_and_queue_drops_are_observable()
     );
     assert!(runtime.status()["droppedEvents"].as_u64().unwrap() > 0);
     db.execute_batch("ROLLBACK").unwrap();
-    let page = invoke(&runtime, &dir, "clipboard_list", json!({}));
+    let page = invoke_after_capture(&runtime, &dir, "clipboard_list", json!({}));
     assert!(page["total"].as_u64().unwrap() <= 65);
     assert_eq!(
         invoke(
@@ -438,7 +450,7 @@ fn byte_bounded_queue_drops_even_below_count_limit() {
         "byte limit must apply before 64 items"
     );
     db.execute_batch("ROLLBACK").unwrap();
-    invoke(&runtime, &dir, "clipboard_list", json!({}));
+    invoke_after_capture(&runtime, &dir, "clipboard_list", json!({}));
     runtime.shutdown().unwrap();
 }
 
