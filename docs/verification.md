@@ -1,6 +1,10 @@
 # 本次剪贴板插件验证记录
 
-日期：2026-11-13。本记录区分真实运行验证与仅实现的构建配置；未发布、未提交或推送。
+日期：2026-11-13。源码已提交推送，六架构构建产物已发布 GitHub 开发预览 Release；插件市场尚未上架，等待支持原生事件协议的正式宿主。
+
+发布验证：[build-plugin / 43360966873](https://github.com/ootools/otools-clipboard/actions/runs/43360966873)，精确源码 `25e05b4b74638a3c9afa0cda190d38c9a2b35736`。Web、macOS/Windows/Linux x64与arm64全部测试/构建/打包通过；产物下载后再次独立校验各归档、摘要、平台架构及原生导出。
+
+预览下载：[plugin-otools-clipboard-v0.1.0](https://github.com/ootools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.1.0)。当前正式宿主v0.9.0不具备事件能力，预览请配套使用 `ootools/OTools@8db4e9a3` 或后续开发构建。
 
 ## 已实际验证
 
@@ -33,7 +37,7 @@ OTOOLS_CLIPBOARD_NATIVE_LIB=/absolute/path/to/lib/macOS.dylib \
 
 ## 未覆盖 / 发布边界
 
-- Windows、Linux、macOS Intel 本次未实际运行，仅有 build-only CI 配置；本地包仅 macOS arm64。
+- Windows、Linux、macOS Intel 已在CI运行原生测试与构建，并产出经独立核验的发行包；真实图形桌面剪贴板事件验收仍仅macOS arm64完成。
 - Linux v1 当前 arboard/X11 配置支持 X11/XWayland；纯 Wayland 明确不支持。
 - 未安装、重启或停止用户正在运行的 `/Applications/OTools.app`，因此完整桌面宿主 startup UI→安装/禁用/卸载→事件服务的 GUI端到端未覆盖。现有运行应用不是改后构建，不能直接使用新事件协议。
 - 周期维护的真实计时和断电/强制进程崩溃恢复未做长期实验；事务、损坏保护与手动 flush 回归已验证。

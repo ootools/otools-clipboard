@@ -2,6 +2,12 @@
 
 OTools 的本地文本与图片历史面板。插件通过宿主原生事件订阅后台保存历史；**不自行读取或写入系统剪贴板**，也不上传历史内容。复制回剪贴板由前端调用现有宿主 `copyText` / `copyImage` 能力。
 
+## 开发预览发行版
+
+[剪贴板历史 v0.1.0 预览下载](https://github.com/ootools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.1.0)，附六个平台/架构的 `.oplg` 包与 `SHA256SUMS`。当前正式 OTools v0.9.0 **不支持原生事件协议**；请使用包含 `ootools/OTools@8db4e9a3` 或后续的开发构建，并手动选择匹配架构。插件市场上架暂缓，等待兼容正式宿主与最低版本门槛。
+
+六架构 CI [43360966873](https://github.com/ootools/otools-clipboard/actions/runs/43360966873) 已成功；CI构建不等同于所有平台真实图形剪贴板验收，详见 `docs/verification.md`。
+
 ## 使用与数据
 
 - 支持文本搜索、文本/图片筛选、置顶、详情、复制、删除、清空、暂停和保留策略。
