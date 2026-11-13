@@ -2,11 +2,11 @@
 
 OTools 的本地文本与图片历史面板。插件通过宿主原生事件订阅后台保存历史；**不自行读取或写入系统剪贴板**，也不上传历史内容。复制回剪贴板由前端调用现有宿主 `copyText` / `copyImage` 能力。
 
-## 开发预览发行版
+## 正式发行版
 
-[剪贴板历史 v0.1.0 预览下载](https://github.com/ootools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.1.0)，附六个平台/架构的 `.oplg` 包与 `SHA256SUMS`。当前正式 OTools v0.9.0 **不支持原生事件协议**；请使用包含 `ootools/OTools@8db4e9a3` 或后续的开发构建，并手动选择匹配架构。插件市场上架暂缓，等待兼容正式宿主与最低版本门槛。
+[剪贴板历史 v0.1.1 下载](https://github.com/ootools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.1.1)，附六个平台/架构的 `.oplg` 包与 `SHA256SUMS`。最低宿主版本为 **OTools 0.9.1**；宿主正式版本由用户稍后发布，0.9.0及更早版本应拒绝安装。本次先上架插件，不发布宿主。
 
-六架构 CI [43360966873](https://github.com/ootools/otools-clipboard/actions/runs/43360966873) 已成功；CI构建不等同于所有平台真实图形剪贴板验收，详见 `docs/verification.md`。
+v0.1.0 的[开发预览 Release](https://github.com/ootools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.1.0)保持不变。六架构原生代码已经由 CI [43360966873](https://github.com/ootools/otools-clipboard/actions/runs/43360966873)验证；v0.1.1只更新发布清单、最低宿主版本和前端包版本，复用相同原生二进制并重新校验。CI构建不等同于所有平台真实图形剪贴板验收。
 
 ## 使用与数据
 
@@ -15,7 +15,7 @@ OTools 的本地文本与图片历史面板。插件通过宿主原生事件订�
 - 同类型、同内容合并，保留首次时间和置顶状态，更新最后复制时间与次数。
 - 数据在宿主提供的 `<pluginDataDir>/clipboard/` 下：`history.sqlite3`（SQLite/WAL）和 `images/<hash>.png`。不会写插件安装目录。
 - 启动只由宿主建立基线，不导入启动前的剪贴板；暂停期间不采集，恢复不补录。
-- 需要实现 `host.events.started` / `clipboard.changed` 的新宿主。旧宿主没有 `pluginDataDir` 时明确显示不可用，不虚假显示录制状态；正式最低宿主版本待事件能力发布后指定，当前不猜测 `minOtoolsVersion`。
+- 需要实现 `host.events.started` / `clipboard.changed` 的 OTools **0.9.1或更新宿主**。包内与市场均声明 `minOtoolsVersion: "0.9.1"`，当前0.9.0应拒绝安装。
 - Linux 宿主 v1 支持 X11/XWayland；纯 Wayland 或无图形后端可能报告不支持/不可用。本地内容没有加密或密码识别保证，请按需要暂停或清空。
 
 ## 本地开发
