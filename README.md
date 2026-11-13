@@ -4,7 +4,7 @@ OTools 的本地文本与图片历史面板。插件通过宿主原生事件订�
 
 ## 正式发行版
 
-[剪贴板历史 v0.1.1 下载](https://github.com/ootools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.1.1)，附六个平台/架构的 `.oplg` 包与 `SHA256SUMS`。最低宿主版本为 **OTools 0.9.1**；宿主正式版本由用户稍后发布，0.9.0及更早版本应拒绝安装。本次先上架插件，不发布宿主。
+[剪贴板历史 v0.1.1 下载](https://github.com/ootools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.1.1)，已上架插件市场，附六个平台/架构的 `.oplg` 包与 `SHA256SUMS`。最低宿主版本为 **OTools 0.9.1**；宿主正式版本由用户稍后发布，0.9.0及更早版本应拒绝安装。本次先上架插件，不发布宿主。
 
 v0.1.0 的[开发预览 Release](https://github.com/ootools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.1.0)保持不变。六架构原生代码已经由 CI [43360966873](https://github.com/ootools/otools-clipboard/actions/runs/43360966873)验证；v0.1.1只更新发布清单、最低宿主版本和前端包版本，复用相同原生二进制并重新校验。CI构建不等同于所有平台真实图形剪贴板验收。
 
