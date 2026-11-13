@@ -1,0 +1,24 @@
+{
+  "packid": "otools-clipboard",
+  "uuid": "otools-clipboard",
+  "version": "0.1.0",
+  "displayName": "Clipboard History",
+  "displayNameCN": "剪贴板历史",
+  "developerName": "OTools",
+  "summary": "本地文本与图片剪贴板历史，支持搜索、置顶、暂停和保留策略。",
+  "entry": "dist/index.html",
+  "logo": "logo.svg",
+  "devUrl": "http://127.0.0.1:6549",
+  "quickDev": true,
+  "openMode": "panel",
+  "openInBrowser": false,
+  "hasAd": false,
+  "inPluginPurchase": false,
+  "key": ["剪贴板", "剪贴板历史", "clipboard", "history"],
+  "screenshots": [],
+  "native": {
+    "enabled": true,
+    "autoReload": false,
+    "events": ["clipboard"]
+  }
+}

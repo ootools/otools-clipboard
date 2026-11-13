@@ -1,0 +1,25 @@
+Vendored first-party source notice
+
+Source: /Users/admin/Documents/Repos/xyito/otools/otools/crates/ot-plugin-ffi
+Repository identity: otools host (ootools/OTools)
+Host commit containing this snapshot: 8db4e9a3 (ootools/OTools main)
+Snapshot date: 2026-11-13
+
+Cargo.toml SHA256:
+3dc2fcf176ba2a058cffddf361380fe411e882a20ad5769fdb41274170aa8033
+src/lib.rs SHA256:
+91e9b030b6639424e2d24f002bd85363be2c86916c1ddf534c78ff02c3a4fee2
+
+This snapshot includes the host owner's 2026-11-13 boxed-slice FFI
+allocation fix, committed and pushed with the native event architecture.
+The host verified 14 ownership/panic tests before this exact source refresh.
+Only Cargo.toml and src/lib.rs are copied; no host-only regression tests.
+
+The two files above are copied without modifications. This vendoring is
+explicitly requested for the independent clipboard native workspace.
+
+The source crate does not declare a license and the host repository has no
+first-party LICENSE/COPYING file. No license grant is inferred or invented
+here. Existing source notices are retained. The source owner explicitly
+requested public repository creation and plugin publishing in this session
+on 2026-11-13. Third-party serde_json dependencies retain their own licenses.

@@ -1,0 +1,38 @@
+OTools plugin SDK snapshot provenance
+
+Copied and refreshed 2026-11-13 from:
+  /Users/admin/Documents/Repos/xyito/otools/otools/vendor/otools-plugin-sdk
+Upstream repository in package metadata:
+  https://github.com/farion1231/cc-switch.git (otools-plugin-sdk)
+Final snapshot repository HEAD (including published event-status types):
+  09035ef (ootools/otools-plugin-sdk main)
+Source snapshot base:
+  d8f4537d022495671bdde411b7eac2bfcbd64a65
+Initial snapshot repository HEAD:
+  5358adb25f81a80fbbff55e52c6ce66dfbb8c196
+
+The initial source checkout contained local file-chooser fixes in
+src/runtime.ts and src/host-file-tree.ts, plus tests/host-file-tree.test.ts.
+Those existing fixes were retained. At the final refresh the source
+checkout's only uncommitted change was src/otools-globals.ts, adding the
+parent's optional state-only getHostEventStatus declaration. The parent's
+current source/dist/tests were copied, not reconstructed or altered.
+
+All current source, dist, tests, scripts and metadata were copied
+byte-for-byte, excluding only .git and node_modules. This is a vendored
+snapshot, not a Git submodule. No upstream source was edited. This
+provenance note is the only added SDK file.
+
+SHA-256 of final copied files:
+  src/runtime.ts: f88b6e16a6bd4d908c1f423b2248df79746507ce94e220ea75e6dd40737e94ed
+  src/host-file-tree.ts: 2bdba512b7037c08af98e902e18f5a60b53b3f057c71f16695e1ba763dd0f169
+  src/otools-globals.ts: 80104c65a5c0980307f9a6c819668b521998c0c301faffb347ffc9721dc4419d
+  dist/runtime.js: aaf36b3a2d7cbff241368078f1680d28ef4458d8ddbf01e3fb1f06d4331df8bf
+
+Note: generated dist files are not committed. Local and CI builds generate
+them from this vendored source before building the clipboard panel. The
+clipboard panel uses native clipboard_status for initial rendering and
+compatibility guidance; the optional host status is additive.
+
+Original MIT license and attribution are retained in LICENSE. See the
+original package.json and README.md for the SDK authors and interfaces.

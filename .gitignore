@@ -1,0 +1,12 @@
+node_modules/
+**/node_modules/
+native/target/
+dist/
+dist-pack/
+lib/
+*.dll
+*.dylib
+*.so
+*.oplg
+*.log
+.DS_Store

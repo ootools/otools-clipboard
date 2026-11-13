@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="Clipboard History">
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#1c8075"/>
+      <stop offset="1" stop-color="#235454"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="url(#background)"/>
+  <rect x="30" y="25" width="68" height="85" rx="10" fill="#f1fbf8"/>
+  <rect x="47" y="16" width="34" height="23" rx="7" fill="#b9e8d9" stroke="#235454" stroke-width="4"/>
+  <path d="M44 54h40M44 68h26M44 82h17" stroke="#2b7770" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="88" cy="93" r="22" fill="#edb85c" stroke="#235454" stroke-width="4"/>
+  <path d="M88 81v13l9 6" stroke="#235454" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>

@@ -1,0 +1,35 @@
+[package]
+name = "otools-clipboard-native"
+version = "0.1.0"
+edition = "2021"
+description = "Host-event clipboard history storage for OTools"
+
+[lib]
+name = "otools_clipboard_native"
+crate-type = ["cdylib", "rlib"]
+
+[workspace]
+members = ["."]
+resolver = "2"
+
+[dependencies]
+base64 = "0.22"
+image = { version = "0.25", default-features = false, features = ["png"] }
+ot-plugin-ffi = { path = "../vendor/host-crates/ot-plugin-ffi" }
+rusqlite = { version = "0.37", features = ["bundled"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+uuid = { version = "1", features = ["v4"] }
+
+[dev-dependencies]
+tempfile = "3"
+
+[profile.dev]
+panic = "unwind"
+
+[profile.release]
+panic = "unwind"
+lto = "thin"
+codegen-units = 1
+strip = "debuginfo"
