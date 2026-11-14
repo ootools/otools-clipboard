@@ -1,24 +1,25 @@
 import { computed, onScopeDispose, ref, shallowRef } from 'vue'
+import dayjs from 'dayjs'
 import type { ClipboardApi, ClipboardCopyHost, ClipboardSettings, ClipboardStatus, HistoryDetail, HistoryItem, ImageData, KindFilter, Unsubscribe } from '../types'
 import { asClipboardError, type ClipboardError } from '../api/errors'
 import { copyHistoryItem } from '../api/copy'
 import { validateSettingsPatch } from '../api/clipboard'
 
-export type Confirmation = { type: 'delete'; item: HistoryItem } | { type: 'clear'; includePinned: boolean }
+export type Confirmation = { type: 'delete'; item: HistoryItem } | { type: 'clear'; includePinned: boolean; scope: 'all' | 'range'; from: string | null; until: string | null }
 export interface HistoryOptions { pageSize?: number; searchDelay?: number; copyHost?: ClipboardCopyHost | null }
 export interface Feedback { key: 'copyRequested' | 'settingsSaved' | 'pinUpdated' | 'entryDeleted' | 'historyCleared'; count?: number }
 
 function todayKey(): string {
-  const now = new Date()
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+  return dayjs().format('YYYY-MM-DD')
 }
 
 /** Local-millisecond half-open bounds [from, until) for a YYYY-MM-DD key. */
 export function dayBounds(value: string): { from: number; until: number } | null {
-  const [year, month, day] = value.split('-').map(Number)
-  if (!Number.isInteger(year) || !Number.isInteger(month) || !Number.isInteger(day) || month < 1 || month > 12 || day < 1 || day > 31) return null
-  const from = new Date(year, month - 1, day).getTime()
-  const until = new Date(year, month - 1, day + 1).getTime()
+  // Round-trip check rejects malformed keys (2026-13-40, partial input, …).
+  const day = dayjs(value)
+  if (!day.isValid() || day.format('YYYY-MM-DD') !== value) return null
+  const from = day.startOf('day').valueOf()
+  const until = day.add(1, 'day').startOf('day').valueOf()
   if (!Number.isSafeInteger(from) || !Number.isSafeInteger(until)) return null
   return { from, until }
 }
@@ -341,17 +342,44 @@ export function useClipboardHistory(api: ClipboardApi, options: HistoryOptions =
   function requestClear() {
     if (busy.value) return
     operationError.value = null
-    confirmation.value = { type: 'clear', includePinned: false }
+    confirmation.value = { type: 'clear', includePinned: false, scope: 'all', from: null, until: null }
+  }
+  function setClearScope(value: 'all' | 'range') {
+    if (confirmation.value?.type !== 'clear' || busy.value) return
+    // Entering range mode prefills with the active day filter (or today).
+    if (value === 'range' && confirmation.value.from === null) {
+      const prefill = date.value ?? todayKey()
+      confirmation.value = { ...confirmation.value, scope: value, from: prefill, until: prefill }
+      return
+    }
+    confirmation.value = { ...confirmation.value, scope: value }
+  }
+  function setClearRange(value: { from: string | null; until: string | null }) {
+    if (confirmation.value?.type !== 'clear' || busy.value) return
+    confirmation.value = { ...confirmation.value, from: value.from, until: value.until }
   }
   function setClearIncludePinned(value: boolean) {
-    if (confirmation.value?.type === 'clear' && !busy.value) confirmation.value = { type: 'clear', includePinned: value }
+    if (confirmation.value?.type === 'clear' && !busy.value) confirmation.value = { ...confirmation.value, includePinned: value }
   }
   function cancelConfirmation() { if (!busy.value) confirmation.value = null }
   async function confirmAction() {
     const pending = confirmation.value
     if (!pending || busy.value) return false
+    // A range scope needs valid day bounds on both ends; the dialog disables
+    // its confirm button, and this guard keeps stale state from invoking.
+    if (pending.type === 'clear' && pending.scope === 'range') {
+      const start = pending.from ? dayBounds(pending.from) : null
+      const end = pending.until ? dayBounds(pending.until) : null
+      if (!start || !end || start.from > end.from) return false
+    }
     const success = await runMutation(async () => {
       if (pending.type === 'delete') { await api.delete(pending.item.id); return { key: 'entryDeleted' } }
+      if (pending.scope === 'range') {
+        const start = dayBounds(pending.from!)!
+        const end = dayBounds(pending.until!)!
+        const result = await api.clear(pending.includePinned, { from: start.from, until: end.until })
+        return { key: 'historyCleared', count: result.removed }
+      }
       const result = await api.clear(pending.includePinned)
       return { key: 'historyCleared', count: result.removed }
     }, pending.type === 'delete' ? 'clipboard_delete' : 'clipboard_clear')
@@ -375,7 +403,7 @@ export function useClipboardHistory(api: ClipboardApi, options: HistoryOptions =
     listLoading, detailLoading, busy, listError, detailError, settingsError, statusError, eventsError, operationError,
     feedback, confirmation, initialize, refresh, refreshStatus, setQuery, setKind, setPinnedOnly, setDate, setPage, select,
     moveSelection, copySelected, togglePin, saveSettings, togglePaused, requestDelete, requestClear,
-    setClearIncludePinned, cancelConfirmation, confirmAction,
+    setClearScope, setClearRange, setClearIncludePinned, cancelConfirmation, confirmAction,
   }
 }
 

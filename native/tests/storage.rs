@@ -207,6 +207,65 @@ fn list_filters_by_last_copied_window_and_rejects_partial_bounds() {
 }
 
 #[test]
+fn clear_supports_half_open_window_and_keeps_neighbors() {
+    let (_dir, mut store) = open();
+    for (index, text) in ["old", "mid", "new"].iter().enumerate() {
+        store.capture(text_payload(text), NOW + index as u64 * DAY).unwrap();
+    }
+    // Clearing one day removes exactly that day, neighbors survive.
+    let cleared = command(
+        &mut store,
+        "clipboard_clear",
+        json!({"from":NOW,"until":NOW + DAY}),
+    );
+    assert_eq!(cleared["removed"], 1);
+    let remaining: Vec<String> = list(&mut store)["items"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|item| item["preview"].as_str().unwrap().to_string())
+        .collect();
+    assert_eq!(remaining, vec!["new".to_string(), "mid".to_string()]);
+    // Inclusive start, exclusive end: zero-width window clears nothing.
+    assert_eq!(
+        command(
+            &mut store,
+            "clipboard_clear",
+            json!({"from":NOW + DAY,"until":NOW + DAY})
+        )["removed"],
+        0
+    );
+    // Partial or inverted bounds are caller errors.
+    for bad in [json!({"from":NOW}), json!({"until":NOW}), json!({"from":NOW + DAY,"until":NOW})] {
+        assert_eq!(
+            store.command("clipboard_clear", bad, NOW).unwrap_err(),
+            "invalidFilter"
+        );
+    }
+    // Pins inside the window survive unless the caller opts in.
+    let pinned_id = list(&mut store)["items"][0]["id"].clone();
+    command(&mut store, "clipboard_set_pinned", json!({"id":pinned_id,"pinned":true}));
+    assert_eq!(
+        command(
+            &mut store,
+            "clipboard_clear",
+            json!({"from":NOW + DAY,"until":NOW + 3 * DAY})
+        )["removed"],
+        1
+    );
+    assert_eq!(list(&mut store)["total"], 1);
+    assert_eq!(
+        command(
+            &mut store,
+            "clipboard_clear",
+            json!({"includePinned":true,"from":NOW + DAY,"until":NOW + 3 * DAY})
+        )["removed"],
+        1
+    );
+    assert_eq!(list(&mut store)["total"], 0);
+}
+
+#[test]
 fn search_filters_pagination_and_literal_like_metacharacters() {
     let (_dir, mut store) = open();
     for (i, text) in ["alpha%_", "alphaXX", "beta"].iter().enumerate() {

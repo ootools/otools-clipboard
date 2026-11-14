@@ -77,9 +77,11 @@ export function createPreviewApi(storage?: SettingsStorage): ClipboardApi {
     },
     async setPinned(id, pinned) { find(id).pinned = pinned; changed() },
     async delete(id) { find(id); items = items.filter(item => item.id !== id); changed() },
-    async clear(includePinned = false) {
+    async clear(includePinned = false, window?: { from: number; until: number }) {
       const before = items.length
-      items = includePinned ? [] : items.filter(item => item.pinned)
+      const deletable = (item: HistoryDetail) => (includePinned || !item.pinned) &&
+        (!window || (item.lastCopiedAt >= window.from && item.lastCopiedAt < window.until))
+      items = items.filter(item => !deletable(item))
       changed()
       return { removed: before - items.length }
     },

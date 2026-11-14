@@ -40,7 +40,7 @@ export interface ClipboardApi {
   getImage(id: string, thumbnail?: boolean): Promise<ImageData>
   setPinned(id: string, pinned: boolean): Promise<void>
   delete(id: string): Promise<void>
-  clear(includePinned?: boolean): Promise<RemovalResult>
+  clear(includePinned?: boolean, window?: { from: number; until: number }): Promise<RemovalResult>
   getSettings(): Promise<ClipboardSettings>
   updateSettings(patch: Partial<ClipboardSettings>): Promise<ClipboardSettings>
   status(): Promise<ClipboardStatus>

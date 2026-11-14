@@ -24,7 +24,7 @@ One worker owns the SQLite connection. Event callbacks only parse/admit bounded 
 - `HistoryItem` → `{id,kind,hash,preview,byteSize,width?,height?,createdAt,lastCopiedAt,copyCount,pinned}`. IDs are canonical UUID strings, hashes lower-case 64 hex. Preview is at most 256 Unicode scalars; image preview is dimensions.
 - `clipboard_get({id})` → `HistoryItem & {text?:string}`.
 - `clipboard_get_image({id,thumbnail?:boolean})` → `{dataUrl,width,height}`. Thumbnail dimensions fit within 256×256 and describe the returned PNG, not the original.
-- `clipboard_set_pinned({id,pinned})` → `{removed:0}`; `clipboard_delete({id})` → `{removed:number}`; `clipboard_clear({includePinned?:boolean})` → `{removed:number}` (default excludes pins).
+- `clipboard_set_pinned({id,pinned})` → `{removed:0}`; `clipboard_delete({id})` → `{removed:number}`; `clipboard_clear({includePinned?,from?,until?})` → `{removed:number}` (default excludes pins). With `from`/`until`, deletion is limited to the same half-open `last_copied_at` window as `clipboard_list`; the bounds must arrive as a valid pair, otherwise `invalidFilter`.
 - `clipboard_get_settings` / `clipboard_update_settings({maxEntries?,retentionDays?,maxBytes?,paused?})` → `{maxEntries,retentionDays,maxBytes,paused}`. Defaults 500/30/268435456/false. Numeric fields are positive JavaScript safe integers; zero, fractional, negative and unsafe values are rejected.
 - `clipboard_status` → `{ready,recording,paused,totalEntries,storageBytes,droppedEvents,lastError:string|null,sourceStatus}`. StorageBytes counts managed text/PNG content, including pins; not SQLite page/WAL overhead.
 - `poll_events` → `{events:[{topic:"clipboard:changed"|"clipboard:status",payload:{}}]}`. Coalesced invalidations only, never content.

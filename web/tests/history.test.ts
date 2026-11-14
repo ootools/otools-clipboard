@@ -250,7 +250,7 @@ describe('history actions and truthful status', () => {
     const history = useHistory(api)
     await history.initialize()
     history.requestClear()
-    expect(history.confirmation.value).toEqual({ type: 'clear', includePinned: false })
+    expect(history.confirmation.value).toMatchObject({ type: 'clear', includePinned: false })
     expect(cleared).toEqual([])
     await history.confirmAction()
     history.requestClear()
@@ -283,6 +283,35 @@ describe('history actions and truthful status', () => {
     expect(calls).toBe(1)
     removal.resolve()
     await first
+  })
+
+  it('clears only the chosen date range when a range scope is confirmed', async () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date(2026, 10, 14, 10, 30))
+    const calls: Array<Record<string, unknown>> = []
+    const api = baseApi()
+    api.clear = async (includePinned, window) => { calls.push({ includePinned: includePinned ?? false, ...(window ?? {}) }); return { removed: 2 } }
+    const history = useHistory(api)
+    await history.initialize()
+    history.requestClear()
+    expect(history.confirmation.value).toMatchObject({ scope: 'all', from: null, until: null })
+    await history.confirmAction()
+    expect(calls).toEqual([{ includePinned: false }])
+    history.requestClear()
+    await history.setClearScope('range')
+    // Switching to range prefills with the active day filter (or today).
+    expect(history.confirmation.value).toMatchObject({ scope: 'range', from: '2026-11-14', until: '2026-11-14' })
+    await history.setClearRange({ from: '2026-11-01', until: '2026-11-03' })
+    await history.confirmAction()
+    expect(calls.at(-1)).toEqual({ includePinned: false, from: new Date(2026, 10, 1).getTime(), until: new Date(2026, 10, 4).getTime() })
+    history.requestClear()
+    await history.setClearScope('range')
+    await history.setClearRange({ from: '2026-11-03', until: '2026-11-01' })
+    expect(await history.confirmAction()).toBe(false)
+    expect(calls).toHaveLength(2)
+    await history.setClearRange({ from: '2026-13-40', until: '2026-12-01' })
+    expect(await history.confirmAction()).toBe(false)
+    expect(calls).toHaveLength(2)
   })
 
   it('persists pause via the native settings contract and only changes UI after its acknowledgement', async () => {

@@ -64,6 +64,22 @@ describe('native clipboard API boundary', () => {
     await expect(api.list({ from: 1.5, until: 9_007_199_254_740_991 })).rejects.toMatchObject({ code: 'INVALID_REQUEST' })
   })
 
+  it('passes an optional clear window through and rejects malformed bounds', async () => {
+    const calls: Array<[string, Record<string, unknown> | undefined]> = []
+    const api = createApi({
+      invoke: async (command, payload) => { calls.push([command, payload]); return { ok: true, data: { removed: 2 } } },
+      listen: async () => () => {},
+    })
+    expect(await api.clear(false, { from: 1_799_990_000_000, until: 1_799_998_640_000 })).toEqual({ removed: 2 })
+    expect(await api.clear(true)).toEqual({ removed: 2 })
+    expect(calls).toEqual([
+      ['clipboard_clear', { includePinned: false, from: 1_799_990_000_000, until: 1_799_998_640_000 }],
+      ['clipboard_clear', { includePinned: true }],
+    ])
+    await expect(api.clear(false, { from: 5, until: 4 })).rejects.toMatchObject({ code: 'INVALID_REQUEST', operation: 'clipboard_clear' })
+    await expect(api.clear(false, { from: 1.5, until: 9_007_199_254_740_991 })).rejects.toMatchObject({ code: 'INVALID_REQUEST' })
+  })
+
   it('accepts an already-unwrapped host reply without reading nested .data', async () => {
     const api = createApi(fixtureTransport({ items: [textItem], total: 1, offset: 0, limit: 40 }))
     expect((await api.list()).items[0]?.id).toBe('text-1')

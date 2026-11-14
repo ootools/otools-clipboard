@@ -161,6 +161,34 @@ describe('real Vue panel', () => {
     expect(root.textContent).toContain('没有匹配的记录')
   })
 
+  it('renders the entry type as a gray pill beside the size instead of its own line', async () => {
+    const root = await mount(baseApi())
+    const row = root.querySelector('[data-history-row="image-1"]')!
+    expect(row.querySelector('[data-testid="kind-pill"]')?.textContent).toBe('图片')
+    expect(row.querySelector('[data-testid="row-top"]')?.textContent).not.toContain('图片')
+    const textRow = root.querySelector('[data-history-row="text-1"]')!
+    expect(textRow.querySelector('[data-testid="kind-pill"]')?.textContent).toBe('文本')
+    expect(textRow.querySelector('[data-testid="row-top"]')?.textContent).not.toContain('文本')
+  })
+
+  it('offers all-history or date-range scope when clearing', async () => {
+    const calls: Array<Record<string, unknown>> = []
+    const api = baseApi()
+    api.clear = async (includePinned, window) => { calls.push({ includePinned: includePinned ?? false, ...(window ?? {}) }); return { removed: 1 } }
+    await mount(api)
+    await click('[data-action="clear-history"]')
+    expect(document.querySelector('[data-testid="clear-scope-all"]')).not.toBeNull()
+    expect(document.querySelector('[data-testid="clear-from"]')).toBeNull()
+    await click('[data-testid="clear-scope-range"] input')
+    const fromInput = document.querySelector<HTMLInputElement>('[data-testid="clear-from"] input')!
+    expect(fromInput, 'range mode reveals start and end date pickers').not.toBeNull()
+    expect(fromInput.value).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+    expect(document.querySelector<HTMLInputElement>('[data-testid="clear-to"] input')).not.toBeNull()
+    await click('[data-action="confirm-clear"]')
+    expect(calls.at(-1)?.from).toBeTypeOf('number')
+    expect(calls.at(-1)?.until).toBeTypeOf('number')
+  })
+
   it('keeps clear available when a filter hides every item but stored history still exists', async () => {
     const api = baseApi()
     api.list = async request => ({ items: request?.pinnedOnly ? [] : [textItem], total: request?.pinnedOnly ? 0 : 1, offset: 0, limit: 40 })

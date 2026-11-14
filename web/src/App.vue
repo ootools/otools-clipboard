@@ -80,7 +80,7 @@ function select(id: string) { mobileDetail.value = true; void history.select(id)
         </span>
       </footer>
       <SettingsDialog :open="settingsOpen" :settings="settings" :busy="busy" :error="operationError ?? settingsError" :t="t" @close="settingsOpen = false" @save="saveSettings" />
-      <ConfirmDialog :confirmation="confirmation" :busy="busy" :error="operationError" :t="t" @cancel="history.cancelConfirmation" @confirm="history.confirmAction" @include-pinned="history.setClearIncludePinned" />
+      <ConfirmDialog :confirmation="confirmation" :busy="busy" :error="operationError" :t="t" @cancel="history.cancelConfirmation" @confirm="history.confirmAction" @include-pinned="history.setClearIncludePinned" @scope="history.setClearScope" @range="history.setClearRange" />
     </main>
   </ElConfigProvider>
 </template>

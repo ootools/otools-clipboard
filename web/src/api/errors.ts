@@ -1,4 +1,4 @@
-export type ClipboardErrorCode = 'INVALID_REPLY' | 'NATIVE_ERROR' | 'HOST_UNAVAILABLE' | 'INVALID_SETTINGS' | 'COPY_UNAVAILABLE' | 'COPY_FAILED'
+export type ClipboardErrorCode = 'INVALID_REPLY' | 'NATIVE_ERROR' | 'HOST_UNAVAILABLE' | 'INVALID_SETTINGS' | 'INVALID_REQUEST' | 'COPY_UNAVAILABLE' | 'COPY_FAILED'
 
 export class ClipboardError extends Error {
   constructor(public readonly code: ClipboardErrorCode, public readonly operation: string, message: string) {

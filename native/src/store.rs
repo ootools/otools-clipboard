@@ -80,6 +80,12 @@ struct IdParams {
 struct ClearParams {
     #[serde(default)]
     include_pinned: bool,
+    /// Optional half-open `last_copied_at` window `[from, until)` in Unix ms.
+    /// Both bounds must be provided together; see `Store::list`.
+    #[serde(default)]
+    from: Option<u64>,
+    #[serde(default)]
+    until: Option<u64>,
 }
 
 pub struct Store {
@@ -423,11 +429,20 @@ impl Store {
             "clipboard_clear" => {
                 let arguments: ClearParams =
                     serde_json::from_value(payload).map_err(|_| "invalidPayload")?;
+                // Optional half-open window over last_copied_at, same pair
+                // rules as `Store::list`; a malformed pair is a caller error.
+                let window = match (arguments.from, arguments.until) {
+                    (None, None) => None,
+                    (Some(from), Some(until)) if from <= until && until <= 9_007_199_254_740_991 => {
+                        Some((from, until))
+                    }
+                    _ => return Err("invalidFilter".into()),
+                };
                 let removed = self
                     .db
                     .execute(
-                        "DELETE FROM history WHERE ?1 OR pinned=0",
-                        [arguments.include_pinned],
+                        "DELETE FROM history WHERE (?1 OR pinned=0) AND (?2 IS NULL OR (last_copied_at>=?2 AND last_copied_at<?3))",
+                        params![arguments.include_pinned, window.map(|(from, _)| from), window.map(|(_, until)| until)],
                     )
                     .map_err(database_error)?;
                 self.cleanup_orphans()?;

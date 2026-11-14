@@ -46,12 +46,13 @@ watch(() => props.selectedId, async id => {
           <UiIcon v-else :name="item.kind" :size="20" />
         </span>
         <span class="min-w-0 flex-1 flex flex-col gap-2">
-          <span class="row justify-between gap-2 text-[10px] muted">
-            <span class="row gap-1.5"><span>{{ t(item.kind) }}</span><span v-if="item.pinned" class="pin-badge row gap-1"><UiIcon name="pin" :size="11" />{{ t('pinned') }}</span></span>
+          <span data-testid="row-top" class="row justify-between gap-2 text-[10px] muted">
+            <span v-if="item.pinned" class="pin-badge row gap-1"><UiIcon name="pin" :size="11" />{{ t('pinned') }}</span>
             <time :datetime="new Date(item.lastCopiedAt).toISOString()" class="whitespace-nowrap">{{ formatDate(item.lastCopiedAt, locale, true) }}</time>
           </span>
           <span class="preview-text text-[13px] leading-relaxed whitespace-pre-wrap break-words">{{ item.preview || t('emptyText') }}</span>
-          <span class="row gap-3 text-[10px] muted">
+          <span class="row gap-2 text-[10px] muted">
+            <span class="kind-pill" data-testid="kind-pill">{{ t(item.kind) }}</span>
             <span>{{ item.kind === 'image' ? `${item.width ?? '?'} × ${item.height ?? '?'}` : formatBytes(item.byteSize) }}</span>
             <span class="row gap-1"><UiIcon name="copy" :size="11" />{{ item.copyCount }}</span>
           </span>

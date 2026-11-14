@@ -101,8 +101,16 @@ export function createClipboardApi(transport: ClipboardTransport = officialTrans
     async getImage(id, thumbnail = false) { return parseImage(await call('clipboard_get_image', { id, thumbnail })) },
     async setPinned(id, pinned) { await call('clipboard_set_pinned', { id, pinned }) },
     async delete(id) { await call('clipboard_delete', { id }) },
-    async clear(includePinned = false) {
-      const result = await call('clipboard_clear', { includePinned })
+    async clear(includePinned = false, window?: { from: number; until: number }) {
+      const payload: Record<string, unknown> = { includePinned }
+      // An optional half-open window mirrors clipboard_list bounds; a malformed
+      // pair is a caller bug and must never reach native code as a silent no-op.
+      if (window !== undefined) {
+        if (!natural(window.from, 0) || !natural(window.until, 0) || window.until < window.from) throw new ClipboardError('INVALID_REQUEST', 'clipboard_clear', 'Invalid clear window')
+        payload.from = window.from
+        payload.until = window.until
+      }
+      const result = await call('clipboard_clear', payload)
       if (!record(result) || !natural(result.removed)) return malformed('clipboard_clear')
       return { removed: result.removed }
     },
