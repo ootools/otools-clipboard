@@ -4,11 +4,11 @@ OTools 的本地文本与图片历史面板。插件通过宿主原生事件订�
 
 ## 正式发行版
 
-[剪贴板历史 v0.1.2 下载](https://github.com/ootools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.1.2)，已上架插件市场，附六个平台/架构的 `.oplg` 包与 `SHA256SUMS`。最低宿主版本为 **OTools 0.9.1**；宿主正式版本由用户稍后发布，0.9.0及更早版本应拒绝安装。本次不发布宿主。
+[剪贴板历史 v0.1.3 下载](https://github.com/ootools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.1.3)，已上架插件市场，附六个平台/架构的 `.oplg` 包与 `SHA256SUMS`。最低宿主版本为 **OTools 0.9.1**；宿主正式版本由用户稍后发布，0.9.0及更早版本应拒绝安装。本次不发布宿主。
 
-v0.1.2 变化：**面板布局重排**——状态并入标题行、搜索与筛选合并为一行，历史列表获得更多可视高度；原生实现与已验证的六架构 CI 产物一致，仅前端与版本号更新。
+v0.1.3 变化：**日期筛选**（工具栏日期选择器，默认当天）、**类型胶囊**（列表条目更紧凑）、**区间清空**（清空对话框支持全部历史或日期范围）；日期解析使用组件库同源 dayjs。原生 `clipboard_list` / `clipboard_clear` 新增可选半开时间窗参数。
 
-[v0.1.1](https://github.com/otools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.1.1)（首个市场版本）与 [v0.1.0](https://github.com/otools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.1.0)（开发预览）保持不变。
+[v0.1.2](https://github.com/otools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.1.2)（布局优化）、[v0.1.1](https://github.com/otools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.1.1)（首个市场版本）与 [v0.1.0](https://github.com/otools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.1.0)（开发预览）保持不变。
 
 ## 使用与数据
 

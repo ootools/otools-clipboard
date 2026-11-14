@@ -1,10 +1,10 @@
 # 本次剪贴板插件验证记录
 
-日期：2026-11-14。v0.1.2（面板布局优化）正式Release并上架市场，接口返回code200，公开列表确认version0.1.2、minOToolsVersion0.9.1、packageMode1与六架构包地址。宿主0.9.1由用户稍后发布；本次未发布宿主。
+日期：2026-11-14。v0.1.3（日期筛选、类型胶囊、区间清空）正式Release并上架市场，接口返回code200，公开列表确认version0.1.3、minOToolsVersion0.9.1、packageMode1与六架构包地址。宿主0.9.1由用户稍后发布；本次未发布宿主。
 
-v0.1.2下载：[plugin-otools-clipboard-v0.1.2](https://github.com/otools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.1.2)。布局提交528a0bc的CI [43602731280](https://github.com/ootools/otools-clipboard/actions/runs/43602731280)全绿；六包用已验证原生库重打并逐包校验，Release远程SHA256摘要核验通过。市场上架前置校验改用Release资产API摘要比对（本机对github.com直连HEAD间歇超时，raw.githubusercontent被重置），令牌仅进程内使用、未输出。
+v0.1.3下载：[plugin-otools-clipboard-v0.1.3](https://github.com/otools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.1.3)。本次原生代码有改动（list/clear时间窗），发布使用该版本提交 e337458 的六架构CI [43606503862](https://github.com/ootools/otools-clipboard/actions/runs/43606503862) 产物（全绿），下载后独立校验清单、架构与SHA256；Release远程摘要核验通过。市场上架前置校验沿用Release资产API摘要比对，令牌仅进程内使用、未输出。
 
-正式下载：[plugin-otools-clipboard-v0.1.1](https://github.com/ootools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.1.1)。v0.1.0预览保持不变。v0.1.1更新清单门槛与插件/前端包版本，原生代码与已通过六架构CI的25e05b4一致；六个包均重打并独立校验最低版本、归档与原生导出，Release远程摘要核验通过。
+v0.1.2（布局优化）与 v0.1.1（最低版本门槛）的发布验证记录保留于下文。
 
 发布验证：[build-plugin / 43360966873](https://github.com/ootools/otools-clipboard/actions/runs/43360966873)，精确源码 `25e05b4b74638a3c9afa0cda190d38c9a2b35736`。Web、macOS/Windows/Linux x64与arm64全部测试/构建/打包通过；产物下载后再次独立校验各归档、摘要、平台架构及原生导出。
 
