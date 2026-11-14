@@ -3,11 +3,9 @@ import { computed } from 'vue'
 import { ElButton } from 'element-plus'
 import type { ClipboardStatus } from '../types'
 import type { Translate } from '../i18n/messages'
-import { formatBytes } from '../composables/format'
 import UiIcon from './UiIcon.vue'
-const props = defineProps<{ mode: 'host' | 'preview'; status: ClipboardStatus | null; paused: boolean; isRecording: boolean; protocolRequired: boolean; statusFailed: boolean; eventsFailed: boolean; t: Translate }>()
+const props = defineProps<{ mode: 'host' | 'preview'; status: ClipboardStatus | null; paused: boolean; protocolRequired: boolean; statusFailed: boolean; eventsFailed: boolean; t: Translate }>()
 const emit = defineEmits<{ retry: []; preview: [] }>()
-const stateLabel = computed(() => props.mode === 'preview' ? props.t('preview') : props.paused ? props.t('paused') : props.isRecording ? props.t('recording') : props.status ? props.t('inactive') : props.t('connecting'))
 const sourceMessage = computed(() => {
   if (props.mode === 'preview' || props.protocolRequired || props.paused) return ''
   if (props.status?.sourceStatus === 'unsupported') return props.t('unsupported')
@@ -15,10 +13,17 @@ const sourceMessage = computed(() => {
   if (props.status?.sourceStatus === 'busy') return props.t('busySource')
   return ''
 })
+const visible = computed(() => props.mode === 'preview'
+  || props.protocolRequired
+  || props.statusFailed
+  || (props.paused && props.mode === 'host')
+  || !!sourceMessage.value
+  || props.eventsFailed
+  || !!props.status?.lastError)
 </script>
 
 <template>
-  <div class="flex flex-col gap-2">
+  <div v-if="visible" class="flex flex-col gap-2 shrink-0">
     <div v-if="mode === 'preview'" class="mode-banner row p-3 text-xs leading-relaxed" data-testid="mode-notice">
       <UiIcon name="info" :size="16" /><span>{{ t('previewBanner') }}</span>
     </div>
@@ -38,17 +43,7 @@ const sourceMessage = computed(() => {
       </div>
       <ElButton size="small" @click="emit('preview')">{{ t('previewAction') }}</ElButton>
     </div>
-    <div class="row flex-wrap justify-between gap-y-2 text-xs muted" aria-live="polite">
-      <span class="status-pill row" :class="{ 'is-live': isRecording, 'is-preview': mode === 'preview', 'is-paused': paused }" data-testid="recording-status">
-        <span class="status-dot" /><span>{{ stateLabel }}</span>
-      </span>
-      <span v-if="status" class="row flex-wrap gap-x-4">
-        <span>{{ status.totalEntries }} {{ t('entries') }}</span>
-        <span>{{ formatBytes(status.storageBytes) }} <span class="opacity-70">{{ t('storage') }}</span></span>
-        <span v-if="status.droppedEvents" class="warning-text">{{ status.droppedEvents }} {{ t('dropped') }}</span>
-      </span>
-    </div>
-    <p v-if="paused && mode === 'host'" class="m-0 text-xs muted">{{ t('pausedHelp') }}</p>
+    <p v-if="paused && mode === 'host' && !protocolRequired && !statusFailed" class="m-0 text-xs muted">{{ t('pausedHelp') }}</p>
     <p v-if="sourceMessage" class="m-0 text-xs warning-text" role="status">{{ sourceMessage }}</p>
     <p v-if="eventsFailed" class="m-0 text-xs warning-text">{{ t('eventsUnavailable') }}</p>
     <p v-if="status?.lastError" class="m-0 text-xs error-text break-words" role="alert">{{ status.lastError }}</p>

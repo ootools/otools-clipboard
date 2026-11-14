@@ -193,6 +193,17 @@ describe('real Vue panel', () => {
     expect(document.activeElement).toBe(root.querySelector('[data-history-row="image-1"]'))
   })
 
+  it('keeps status chips inside the header and search plus filters on one toolbar row', async () => {
+    const root = await mount(baseApi())
+    const status = root.querySelector('[data-testid="recording-status"]')
+    expect(status, 'recording status chips must exist').not.toBeNull()
+    expect(root.querySelector('header')?.contains(status!), 'status belongs to the header row, not its own block').toBe(true)
+    const toolbar = root.querySelector('input[data-testid="search"]')?.closest('.toolbar-row')
+    expect(toolbar, 'search and filter buttons share one toolbar row').not.toBeNull()
+    expect(toolbar!.querySelector('[data-filter="all"]')).not.toBeNull()
+    expect(toolbar!.querySelector('[data-filter="pinned"]')).not.toBeNull()
+  })
+
   it('explains background local recording and the no-startup-import rule in visible panel text', async () => {
     const root = await mount(baseApi())
     expect(root.textContent).toContain('启动不导入当前剪贴板')

@@ -64,6 +64,8 @@ button { color: inherit; }
 kbd { font-family: inherit; }
 ::selection { background: color-mix(in srgb, var(--clip-accent) 20%, transparent); }
 .clipboard-app { background: var(--clip-bg); }
+.search-input { flex: 1 1 200px; min-width: 180px; }
+.search-input .el-input__wrapper { min-height: 32px; }
 .app-mark { color: var(--clip-accent); background: var(--clip-selected); border: 1px solid color-mix(in srgb, var(--clip-accent) 15%, var(--clip-border)); }
 .workspace-grid { grid-template-columns: minmax(270px, 0.95fr) minmax(320px, 1.2fr); }
 .history-list, .detail-panel { box-shadow: 0 2px 7px #14203c03; }
