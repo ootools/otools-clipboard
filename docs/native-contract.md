@@ -20,7 +20,7 @@ One worker owns the SQLite connection. Event callbacks only parse/admit bounded 
 
 ## UI methods
 
-- `clipboard_list({query?,kind?:"all"|"text"|"image",pinnedOnly?,offset?,limit?})` → `{items,total,offset,limit}`. Default limit 50, maximum 100. Query is a literal text substring (SQLite ASCII case-folding); `%` / `_` are not wildcards. Ordering: pinned first, then most recent. No PNG or full text bodies in list.
+- `clipboard_list({query?,kind?:"all"|"text"|"image",pinnedOnly?,offset?,limit?,from?,until?})` → `{items,total,offset,limit}`. Default limit 50, maximum 100. Query is a literal text substring (SQLite ASCII case-folding); `%` / `_` are not wildcards. `from`/`until` are an optional half-open `[from, until)` window in Unix ms over `last_copied_at`; both bounds must be sent together with `from <= until <= 2^53-1`, otherwise `invalidFilter`. Ordering: pinned first, then most recent. No PNG or full text bodies in list.
 - `HistoryItem` → `{id,kind,hash,preview,byteSize,width?,height?,createdAt,lastCopiedAt,copyCount,pinned}`. IDs are canonical UUID strings, hashes lower-case 64 hex. Preview is at most 256 Unicode scalars; image preview is dimensions.
 - `clipboard_get({id})` → `HistoryItem & {text?:string}`.
 - `clipboard_get_image({id,thumbnail?:boolean})` → `{dataUrl,width,height}`. Thumbnail dimensions fit within 256×256 and describe the returned PNG, not the original.

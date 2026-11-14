@@ -17,7 +17,7 @@ export interface HistoryItem {
 
 export interface HistoryDetail extends HistoryItem { text?: string }
 export interface ImageData { dataUrl: string; width: number; height: number }
-export interface ListRequest { query?: string; kind?: KindFilter; pinnedOnly?: boolean; offset?: number; limit?: number }
+export interface ListRequest { query?: string; kind?: KindFilter; pinnedOnly?: boolean; offset?: number; limit?: number; from?: number; until?: number }
 export interface HistoryPage { items: HistoryItem[]; total: number; offset: number; limit: number }
 export interface ClipboardSettings { maxEntries: number; retentionDays: number; maxBytes: number; paused: boolean }
 export interface ClipboardStatus {

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { nextTick, ref } from 'vue'
-import { ElButton, ElInput } from 'element-plus'
+import { ElButton, ElDatePicker, ElInput } from 'element-plus'
 import type { KindFilter } from '../types'
 import type { Translate } from '../i18n/messages'
 import UiIcon from './UiIcon.vue'
-defineProps<{ query: string; kind: KindFilter; pinnedOnly: boolean; t: Translate }>()
-const emit = defineEmits<{ query: [value: string]; kind: [value: KindFilter]; pinned: [value: boolean] }>()
+defineProps<{ query: string; kind: KindFilter; pinnedOnly: boolean; date: string | null; t: Translate }>()
+const emit = defineEmits<{ query: [value: string]; kind: [value: KindFilter]; pinned: [value: boolean]; date: [value: string | null] }>()
 const input = ref<InstanceType<typeof ElInput>>()
 defineExpose({ focus: async () => { await nextTick(); input.value?.focus(); input.value?.input?.select() } })
 </script>
@@ -24,5 +24,8 @@ defineExpose({ focus: async () => { await nextTick(); input.value?.focus(); inpu
     <ElButton size="small" :class="{ 'filter-active': pinnedOnly }" :aria-pressed="pinnedOnly" data-filter="pinned" @click="emit('pinned', !pinnedOnly)">
       <UiIcon name="pin" :size="14" /><span>{{ t('pinnedOnly') }}</span>
     </ElButton>
+    <span class="date-field row shrink-0" role="group" :aria-label="t('dateFilter')" :title="t('dateFilter')" data-testid="date-filter">
+      <ElDatePicker class="date-filter" :model-value="date" type="date" size="small" value-format="YYYY-MM-DD" clearable :teleported="true" :placeholder="t('dateAll')" @update:model-value="emit('date', $event as string | null)" />
+    </span>
   </div>
 </template>

@@ -1,6 +1,7 @@
 const zh = {
   title: '剪贴板历史', subtitle: '每一次复制，都有迹可循', localOnly: '仅保存在本机',
   search: '搜索文本内容…', all: '全部', text: '文本', image: '图片', pinnedOnly: '仅置顶',
+  dateFilter: '按日期筛选历史', dateAll: '全部日期',
   pinned: '已置顶', pin: '置顶', unpin: '取消置顶', copy: '复制', delete: '删除', clear: '清空',
   settings: '保留设置', refresh: '刷新', pause: '暂停记录', resume: '恢复记录', paused: '已暂停',
   recording: '正在记录', connecting: '正在连接', inactive: '未在记录', preview: '人工样例预览',
@@ -38,6 +39,7 @@ const zh = {
 const en: Record<keyof typeof zh, string> = {
   title: 'Clipboard history', subtitle: 'A little order for everything you copy', localOnly: 'Stored on this device',
   search: 'Search text content…', all: 'All', text: 'Text', image: 'Images', pinnedOnly: 'Pinned only',
+  dateFilter: 'Filter history by date', dateAll: 'All dates',
   pinned: 'Pinned', pin: 'Pin', unpin: 'Unpin', copy: 'Copy', delete: 'Delete', clear: 'Clear',
   settings: 'Retention settings', refresh: 'Refresh', pause: 'Pause recording', resume: 'Resume recording', paused: 'Paused',
   recording: 'Recording', connecting: 'Connecting', inactive: 'Not recording', preview: 'Synthetic preview',

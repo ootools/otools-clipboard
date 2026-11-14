@@ -48,6 +48,22 @@ describe('native clipboard API boundary', () => {
     ])
   })
 
+  it('passes an explicit date window through and omits it entirely otherwise', async () => {
+    const calls: Array<[string, Record<string, unknown> | undefined]> = []
+    const api = createApi({
+      invoke: async (command, payload) => { calls.push([command, payload]); return { ok: true, data: { items: [], total: 0, offset: 0, limit: 40 } } },
+      listen: async () => () => {},
+    })
+    await api.list({ from: 1_799_990_000_000, until: 1_799_998_640_000 })
+    await api.list({ query: '', kind: 'all', pinnedOnly: false })
+    expect(calls).toEqual([
+      ['clipboard_list', { kind: 'all', pinnedOnly: false, offset: 0, limit: 40, from: 1_799_990_000_000, until: 1_799_998_640_000 }],
+      ['clipboard_list', { kind: 'all', pinnedOnly: false, offset: 0, limit: 40 }],
+    ])
+    await expect(api.list({ from: 5, until: 4 })).rejects.toMatchObject({ code: 'INVALID_REQUEST', operation: 'clipboard_list' })
+    await expect(api.list({ from: 1.5, until: 9_007_199_254_740_991 })).rejects.toMatchObject({ code: 'INVALID_REQUEST' })
+  })
+
   it('accepts an already-unwrapped host reply without reading nested .data', async () => {
     const api = createApi(fixtureTransport({ items: [textItem], total: 1, offset: 0, limit: 40 }))
     expect((await api.list()).items[0]?.id).toBe('text-1')

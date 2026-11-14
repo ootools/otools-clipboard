@@ -37,12 +37,35 @@ describe('history query and concurrency', () => {
     expect(history.status.value).toEqual(readyStatus)
   })
 
+  it('filters by the selected day, defaults to today, and clears back to all history', async () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date(2026, 10, 14, 10, 30))
+    const requests: ListRequest[] = []
+    const api = baseApi()
+    api.list = async request => { requests.push({ ...request }); return { items: [textItem], total: 1, offset: request?.offset ?? 0, limit: 40 } }
+    const history = useHistory(api)
+    await history.initialize()
+    // Default view is today: local midnight to the next local midnight.
+    expect(requests.at(-1)).toMatchObject({ from: new Date(2026, 10, 14).getTime(), until: new Date(2026, 10, 15).getTime() })
+    await history.setDate('2026-11-01')
+    expect(requests.at(-1)).toMatchObject({ from: new Date(2026, 10, 1).getTime(), until: new Date(2026, 10, 2).getTime(), offset: 0 })
+    await history.setKind('image')
+    expect(requests.at(-1)).toMatchObject({ kind: 'image', from: new Date(2026, 10, 1).getTime(), until: new Date(2026, 10, 2).getTime() })
+    await history.setDate(null)
+    expect(requests.at(-1)?.from).toBeUndefined()
+    expect(requests.at(-1)?.until).toBeUndefined()
+    await history.setDate('2026-13-40')
+    expect('from' in requests.at(-1)!).toBe(false)
+    expect(history.date.value).toBe(null)
+  })
+
   it('preserves the exact offset for pagination and resets to page one for type/pin filters', async () => {
     const requests: ListRequest[] = []
     const api = baseApi()
     api.list = async request => { requests.push({ ...request }); return { items: [textItem], total: 95, offset: request?.offset ?? 0, limit: 40 } }
     const history = useHistory(api)
     await history.initialize()
+    await history.setDate(null)
     await history.setPage(2)
     expect(history.page.value).toBe(2)
     expect(requests.at(-1)).toEqual({ query: '', kind: 'all', pinnedOnly: false, offset: 40, limit: 40 })

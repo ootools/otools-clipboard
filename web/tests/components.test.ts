@@ -202,6 +202,9 @@ describe('real Vue panel', () => {
     expect(toolbar, 'search and filter buttons share one toolbar row').not.toBeNull()
     expect(toolbar!.querySelector('[data-filter="all"]')).not.toBeNull()
     expect(toolbar!.querySelector('[data-filter="pinned"]')).not.toBeNull()
+    const dateFilter = toolbar!.querySelector('[data-testid="date-filter"]')
+    expect(dateFilter, 'a date picker sits on the right of the filter row').not.toBeNull()
+    expect(dateFilter?.getAttribute('aria-label')).toContain('日期')
   })
 
   it('explains background local recording and the no-startup-import rule in visible panel text', async () => {

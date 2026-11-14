@@ -8,11 +8,28 @@ export type Confirmation = { type: 'delete'; item: HistoryItem } | { type: 'clea
 export interface HistoryOptions { pageSize?: number; searchDelay?: number; copyHost?: ClipboardCopyHost | null }
 export interface Feedback { key: 'copyRequested' | 'settingsSaved' | 'pinUpdated' | 'entryDeleted' | 'historyCleared'; count?: number }
 
+function todayKey(): string {
+  const now = new Date()
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+}
+
+/** Local-millisecond half-open bounds [from, until) for a YYYY-MM-DD key. */
+export function dayBounds(value: string): { from: number; until: number } | null {
+  const [year, month, day] = value.split('-').map(Number)
+  if (!Number.isInteger(year) || !Number.isInteger(month) || !Number.isInteger(day) || month < 1 || month > 12 || day < 1 || day > 31) return null
+  const from = new Date(year, month - 1, day).getTime()
+  const until = new Date(year, month - 1, day + 1).getTime()
+  if (!Number.isSafeInteger(from) || !Number.isSafeInteger(until)) return null
+  return { from, until }
+}
+
 export function useClipboardHistory(api: ClipboardApi, options: HistoryOptions = {}) {
   const pageSize = options.pageSize ?? 40
   const query = ref('')
   const kind = ref<KindFilter>('all')
   const pinnedOnly = ref(false)
+  // The date filter defaults to today (local calendar day); null shows every entry.
+  const date = ref<string | null>(todayKey())
   const page = ref(1)
   const items = shallowRef<HistoryItem[]>([])
   const total = ref(0)
@@ -147,7 +164,8 @@ export function useClipboardHistory(api: ClipboardApi, options: HistoryOptions =
     listLoading.value = true
     listError.value = null
     try {
-      const result = await api.list({ query: query.value, kind: kind.value, pinnedOnly: pinnedOnly.value, offset, limit: pageSize })
+      const bounds = date.value ? dayBounds(date.value) : null
+      const result = await api.list({ query: query.value, kind: kind.value, pinnedOnly: pinnedOnly.value, offset, limit: pageSize, ...(bounds ? { from: bounds.from, until: bounds.until } : {}) })
       if (disposed || epoch !== pageEpoch) return
       if (offset > 0 && offset >= result.total) {
         page.value = Math.max(1, Math.ceil(result.total / pageSize))
@@ -243,6 +261,15 @@ export function useClipboardHistory(api: ClipboardApi, options: HistoryOptions =
   async function setPinnedOnly(value: boolean) {
     if (pinnedOnly.value === value || disposed) return
     pinnedOnly.value = value
+    stopSearchTimer()
+    invalidateQuery()
+    await refresh()
+  }
+  async function setDate(value: string | null) {
+    // Reject malformed keys instead of silently filtering with broken bounds.
+    if (value !== null && dayBounds(value) === null) return
+    if (date.value === value || disposed) return
+    date.value = value
     stopSearchTimer()
     invalidateQuery()
     await refresh()
@@ -343,10 +370,10 @@ export function useClipboardHistory(api: ClipboardApi, options: HistoryOptions =
   })
 
   return {
-    mode: api.mode, pageSize, query, kind, pinnedOnly, page, pageCount, items, total, selectedId, selectedItem,
+    mode: api.mode, pageSize, query, kind, pinnedOnly, date, page, pageCount, items, total, selectedId, selectedItem,
     detail, selectedImage, thumbnails, settings, status, paused, isRecording, protocolRequired,
     listLoading, detailLoading, busy, listError, detailError, settingsError, statusError, eventsError, operationError,
-    feedback, confirmation, initialize, refresh, refreshStatus, setQuery, setKind, setPinnedOnly, setPage, select,
+    feedback, confirmation, initialize, refresh, refreshStatus, setQuery, setKind, setPinnedOnly, setDate, setPage, select,
     moveSelection, copySelected, togglePin, saveSettings, togglePaused, requestDelete, requestClear,
     setClearIncludePinned, cancelConfirmation, confirmAction,
   }

@@ -155,6 +155,58 @@ fn thumbnail_is_bounded_and_keeps_original_metadata() {
 }
 
 #[test]
+fn list_filters_by_last_copied_window_and_rejects_partial_bounds() {
+    let (_dir, mut store) = open();
+    for (index, text) in ["old", "mid", "new"].iter().enumerate() {
+        store.capture(text_payload(text), NOW + index as u64 * DAY).unwrap();
+    }
+    // The window is inclusive at from and exclusive at until.
+    let window = command(
+        &mut store,
+        "clipboard_list",
+        json!({"from":NOW,"until":NOW + DAY}),
+    );
+    assert_eq!(window["total"], 1);
+    assert_eq!(window["items"][0]["preview"], "old");
+    let single = command(
+        &mut store,
+        "clipboard_list",
+        json!({"from":NOW + DAY,"until":NOW + DAY + 1}),
+    );
+    assert_eq!(single["total"], 1);
+    assert_eq!(single["items"][0]["preview"], "mid");
+    assert_eq!(
+        command(
+            &mut store,
+            "clipboard_list",
+            json!({"from":NOW,"until":NOW + 3 * DAY})
+        )["total"],
+        3
+    );
+    // A half-open window cannot select a single instant twice.
+    assert_eq!(
+        command(
+            &mut store,
+            "clipboard_list",
+            json!({"from":NOW,"until":NOW})
+        )["total"],
+        0
+    );
+    // Partial or inverted bounds are caller errors, never silent filters.
+    for bad in [
+        json!({"from":NOW}),
+        json!({"until":NOW}),
+        json!({"from":NOW + DAY,"until":NOW}),
+    ] {
+        assert_eq!(
+            store.command("clipboard_list", bad, NOW).unwrap_err(),
+            "invalidFilter"
+        );
+    }
+    assert_eq!(list(&mut store)["total"], 3);
+}
+
+#[test]
 fn search_filters_pagination_and_literal_like_metacharacters() {
     let (_dir, mut store) = open();
     for (i, text) in ["alpha%_", "alphaXX", "beta"].iter().enumerate() {

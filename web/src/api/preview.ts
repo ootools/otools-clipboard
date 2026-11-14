@@ -61,8 +61,10 @@ export function createPreviewApi(storage?: SettingsStorage): ClipboardApi {
     mode: 'preview',
     async list(request = {}) {
       const query = request.query?.toLocaleLowerCase() ?? ''
+      const windowed = request.from !== undefined && request.until !== undefined
       const filtered = items.filter(item => (!request.kind || request.kind === 'all' || item.kind === request.kind) &&
-        (!request.pinnedOnly || item.pinned) && (!query || (item.kind === 'text' && item.text?.toLocaleLowerCase().includes(query))))
+        (!request.pinnedOnly || item.pinned) && (!query || (item.kind === 'text' && item.text?.toLocaleLowerCase().includes(query))) &&
+        (!windowed || (item.lastCopiedAt >= request.from! && item.lastCopiedAt < request.until!)))
         .sort((a, b) => b.lastCopiedAt - a.lastCopiedAt)
       const offset = Math.max(0, request.offset ?? 0)
       const limit = Math.min(100, Math.max(1, request.limit ?? 40))

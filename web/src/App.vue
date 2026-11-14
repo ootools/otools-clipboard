@@ -26,7 +26,7 @@ const api = props.api ?? (isExplicitPreview(window.location.search) ? createPrev
 const history = useClipboardHistory(api)
 const { t, locale, theme, setLocale, setTheme } = useAppearance()
 const {
-  mode, query, kind, pinnedOnly, page, pageCount, items, total, selectedId, selectedItem, detail,
+  mode, query, kind, pinnedOnly, date, page, pageCount, items, total, selectedId, selectedItem, detail,
   selectedImage, thumbnails, settings, status, paused, isRecording, protocolRequired, listLoading,
   detailLoading, busy, listError, detailError, settingsError, statusError, eventsError, operationError, feedback, confirmation,
 } = history
@@ -67,7 +67,7 @@ function select(id: string) { mobileDetail.value = true; void history.select(id)
       <StatusNotices :mode="mode" :status="status" :paused="paused" :protocol-required="protocolRequired" :status-failed="statusError !== null" :events-failed="eventsError !== null" :t="t" @retry="history.refreshStatus(); history.refresh()" @preview="showPreview" />
       <div v-if="operationError && !confirmation && !settingsOpen" class="shrink-0"><ErrorNotice :error="operationError" :t="t" compact /></div>
       <div v-else-if="feedback && !confirmation && !settingsOpen" class="feedback-notice row p-2 text-xs shrink-0" role="status"><UiIcon name="check" :size="14" />{{ t(feedback.key, { count: feedback.count ?? 0 }) }}</div>
-      <HistoryFilters ref="filters" :query="query" :kind="kind" :pinned-only="pinnedOnly" :t="t" @query="history.setQuery" @kind="history.setKind" @pinned="history.setPinnedOnly" />
+      <HistoryFilters ref="filters" :query="query" :kind="kind" :pinned-only="pinnedOnly" :date="date" :t="t" @query="history.setQuery" @kind="history.setKind" @pinned="history.setPinnedOnly" @date="history.setDate" />
       <div class="workspace-grid grid gap-3 flex-1 min-h-0" :class="{ 'show-detail': mobileDetail }">
         <HistoryList :items="items" :total="total" :page="page" :page-count="pageCount" :selected-id="selectedId" :thumbnails="thumbnails" :loading="listLoading" :error="listError" :filtered="filtered" :locale="locale" :t="t" @select="select" @page="history.setPage" @retry="history.refresh" />
         <HistoryDetail :item="selectedItem" :detail="detail" :image="selectedImage" :loading="detailLoading" :error="detailError" :busy="busy" :locale="locale" :t="t" @copy="history.copySelected" @pin="history.togglePin()" @delete="history.requestDelete()" @retry="history.select(selectedId)" @back="mobileDetail = false" />

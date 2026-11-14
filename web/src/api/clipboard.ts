@@ -88,6 +88,13 @@ export function createClipboardApi(transport: ClipboardTransport = officialTrans
     async list(request: ListRequest = {}) {
       const payload: Record<string, unknown> = { kind: request.kind ?? 'all', pinnedOnly: request.pinnedOnly ?? false, offset: request.offset ?? 0, limit: request.limit ?? 40 }
       if (request.query) payload.query = request.query
+      // A date window is optional but must arrive as a well-formed half-open
+      // pair of safe integers; anything else is a caller bug, not a filter.
+      if (request.from !== undefined || request.until !== undefined) {
+        if (!natural(request.from, 0) || !natural(request.until, 0) || request.until < request.from) throw new ClipboardError('INVALID_REQUEST', 'clipboard_list', 'Invalid date window')
+        payload.from = request.from
+        payload.until = request.until
+      }
       return parsePage(await call('clipboard_list', payload))
     },
     async get(id) { return parseDetail(await call('clipboard_get', { id })) },

@@ -85,6 +85,10 @@ pub struct ListParams {
     pub pinned_only: Option<bool>,
     pub offset: Option<u64>,
     pub limit: Option<u64>,
+    /// Optional half-open `last_copied_at` window `[from, until)` in Unix ms.
+    /// Both bounds must be provided together; see `Store::list`.
+    pub from: Option<u64>,
+    pub until: Option<u64>,
 }
 
 pub fn valid_hash(hash: &str) -> bool {

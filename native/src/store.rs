@@ -465,18 +465,28 @@ impl Store {
         let offset = arguments.offset.unwrap_or(0).min(9_007_199_254_740_991);
         let limit = arguments.limit.unwrap_or(50).clamp(1, 100);
         let pinned = arguments.pinned_only.unwrap_or(false);
-        let filter="(?1='all' OR kind=?1) AND (?2=0 OR pinned=1) AND (?3='' OR (kind='text' AND INSTR(LOWER(text),LOWER(?3))>0))";
+        // Half-open [from, until) window over last_copied_at. The bounds must
+        // arrive as a well-formed pair; anything else is a caller error, not a
+        // silently ignored filter.
+        let window = match (arguments.from, arguments.until) {
+            (None, None) => None,
+            (Some(from), Some(until)) if from <= until && until <= 9_007_199_254_740_991 => {
+                Some((from, until))
+            }
+            _ => return Err("invalidFilter".into()),
+        };
+        let filter="(?1='all' OR kind=?1) AND (?2=0 OR pinned=1) AND (?3='' OR (kind='text' AND INSTR(LOWER(text),LOWER(?3))>0)) AND (?4 IS NULL OR (last_copied_at>=?4 AND last_copied_at<?5))";
         let total: u64 = self
             .db
             .query_row(
                 &format!("SELECT COUNT(*) FROM history WHERE {filter}"),
-                params![kind, pinned, query],
+                params![kind, pinned, query, window.map(|(from, _)| from), window.map(|(_, until)| until)],
                 |row| row.get(0),
             )
             .map_err(database_error)?;
-        let mut statement=self.db.prepare(&format!("SELECT {FIELDS} FROM history WHERE {filter} ORDER BY pinned DESC,last_copied_at DESC,id ASC LIMIT ?4 OFFSET ?5")).map_err(database_error)?;
+        let mut statement=self.db.prepare(&format!("SELECT {FIELDS} FROM history WHERE {filter} ORDER BY pinned DESC,last_copied_at DESC,id ASC LIMIT ?6 OFFSET ?7")).map_err(database_error)?;
         let rows = statement
-            .query_map(params![kind, pinned, query, limit, offset], item)
+            .query_map(params![kind, pinned, query, window.map(|(from, _)| from), window.map(|(_, until)| until), limit, offset], item)
             .map_err(database_error)?;
         let items: Vec<HistoryItem> = rows
             .collect::<std::result::Result<_, _>>()
