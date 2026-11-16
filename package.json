@@ -13,5 +13,8 @@
     "verify": "node scripts/verify-plugin.mjs",
     "test": "pnpm --dir web test",
     "typecheck": "pnpm --dir web typecheck"
+  },
+  "devDependencies": {
+    "otools-plugin-sdk": "^0.3.0"
   }
 }

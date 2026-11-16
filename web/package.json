@@ -15,7 +15,7 @@
     "@tauri-apps/plugin-dialog": "2.6.0",
     "element-plus": "2.13.2",
     "dayjs": "^1.11.19",
-    "otools-plugin-sdk": "workspace:*",
+    "otools-plugin-sdk": "^0.3.0",
     "vue": "3.5.27"
   },
   "devDependencies": {
