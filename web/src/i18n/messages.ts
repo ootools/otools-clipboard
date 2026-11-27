@@ -36,6 +36,10 @@ const zh = {
   settingsSaved: '设置已保存', pinUpdated: '置顶已更新', entryDeleted: '记录已删除', historyCleared: '已清除 {count} 条记录',
   operationFailed: '操作失败', invalidReply: '宿主返回了无效数据', nativeError: '原生插件操作失败',
   language: '界面语言', theme: '明暗主题', light: '浅色', dark: '深色', showHistory: '返回历史',
+  filter: '筛选', filterTitle: '筛选条件', type: '类型', date: '日期', apply: '应用', reset: '重置',
+  today: '今天', yesterday: '昨天', earlier: '更早',
+  selected: '选中记录', copyToClipboard: '复制到剪贴板', keyboardHint: 'Enter 复制 · 方向键切换记录',
+  record: '记录', appearance: '外观', about: '关于', footerHelp: '帮助与源码',
 }
 
 const en: Record<keyof typeof zh, string> = {
@@ -76,6 +80,10 @@ const en: Record<keyof typeof zh, string> = {
   settingsSaved: 'Settings saved', pinUpdated: 'Pin updated', entryDeleted: 'Entry deleted', historyCleared: '{count} entries cleared',
   operationFailed: 'Operation failed', invalidReply: 'The host returned invalid data', nativeError: 'Native plugin operation failed',
   language: 'Interface language', theme: 'Color theme', light: 'Light', dark: 'Dark', showHistory: 'Back to history',
+  filter: 'Filter', filterTitle: 'Filters', type: 'Type', date: 'Date', apply: 'Apply', reset: 'Reset',
+  today: 'Today', yesterday: 'Yesterday', earlier: 'Earlier',
+  selected: 'Selected entry', copyToClipboard: 'Copy to clipboard', keyboardHint: 'Enter to copy · Arrow keys to switch',
+  record: 'Recording', appearance: 'Appearance', about: 'About', footerHelp: 'Help & source',
 }
 
 export type Locale = 'zh-CN' | 'en-US'

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-withDefaults(defineProps<{ name: 'clipboard' | 'search' | 'text' | 'image' | 'pin' | 'copy' | 'trash' | 'settings' | 'refresh' | 'pause' | 'play' | 'check' | 'info' | 'arrow-left' | 'arrow-right' | 'moon' | 'sun'; size?: number }>(), { size: 18 })
+withDefaults(defineProps<{ name: 'clipboard' | 'search' | 'text' | 'image' | 'pin' | 'copy' | 'trash' | 'settings' | 'refresh' | 'pause' | 'play' | 'check' | 'info' | 'arrow-left' | 'arrow-right' | 'moon' | 'sun' | 'filter' | 'close'; size?: number }>(), { size: 18 })
 const paths: Record<string, string> = {
   clipboard: 'M9 5H6a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-3 M9 3h6v4H9z M8 12h8 M8 16h5',
   search: 'M21 21l-5-5 M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0',
@@ -12,6 +12,8 @@ const paths: Record<string, string> = {
   info: 'M12 11v6 M12 7h.01 M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0',
   'arrow-left': 'M15 5l-7 7 7 7', 'arrow-right': 'M9 5l7 7-7 7',
   moon: 'M21 13A9 9 0 0 1 11 3a9 9 0 1 0 10 10', sun: 'M12 3V1 M12 23v-2 M3 12H1 M23 12h-2 M4 4l2 2 M18 18l2 2 M4 20l2-2 M18 6l2-2 M17 12a5 5 0 1 1-10 0 5 5 0 0 1 10 0',
+  filter: 'M4 6h16 M7 12h10 M10 18h4',
+  close: 'M6 6l12 12 M18 6L6 18',
 }
 </script>
 

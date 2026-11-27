@@ -60,7 +60,7 @@ jobs:
           node-version: '22'
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --dir vendor/otools-plugin-sdk build
+      # SDK 已作为 npm 依赖（otools-plugin-sdk@^0.3.0）由 pnpm 安装，dist 预构建，无需再编译 vendor 副本。
       - run: pnpm --dir web run test
       - run: pnpm --dir web exec vue-tsc --noEmit --pretty false
       - run: node scripts/build-web.mjs

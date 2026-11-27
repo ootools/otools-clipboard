@@ -1,7 +1,7 @@
 {
   "packid": "otools-clipboard",
   "uuid": "otools-clipboard",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "minOtoolsVersion": "0.9.1",
   "displayName": "Clipboard History",
   "displayNameCN": "剪贴板历史",

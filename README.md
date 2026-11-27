@@ -4,11 +4,11 @@ OTools 的本地文本与图片历史面板。插件通过宿主原生事件订�
 
 ## 正式发行版
 
-[剪贴板历史 v0.1.3 下载](https://github.com/ootools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.1.3)，已上架插件市场，附六个平台/架构的 `.oplg` 包与 `SHA256SUMS`。最低宿主版本为 **OTools 0.9.1**；宿主正式版本由用户稍后发布，0.9.0及更早版本应拒绝安装。本次不发布宿主。
+[剪贴板历史 v0.2.0 下载](https://github.com/ootools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.2.0)，已上架插件市场，附六个平台/架构的 `.oplg` 包与 `SHA256SUMS`。最低宿主版本为 **OTools 0.9.1**；宿主正式版本由用户稍后发布，0.9.0及更早版本应拒绝安装。本次不发布宿主。
 
-v0.1.3 变化：**日期筛选**（工具栏日期选择器，默认当天）、**类型胶囊**（列表条目更紧凑）、**区间清空**（清空对话框支持全部历史或日期范围）；日期解析使用组件库同源 dayjs。原生 `clipboard_list` / `clipboard_clear` 新增可选半开时间窗参数。
+v0.2.0 变化：**界面按功能重排**——命令栏只保留搜索唯一焦点，历史改为按「今天 / 昨天 / 更早」分组的 48px 单行列表（取消等重卡片墙、彩色胶囊与常驻横幅），右侧为从属检视区（内容预览 + 圆点元信息 + 唯一「复制」主按钮），底部状态压成一行；筛选、置顶、日期收进浮层，保留策略/语言/主题/清空收进设置抽屉与二次确认。仅前端视觉与交互壳改动，原生 `clipboard_list` / `clipboard_clear` 契约不变。同步修复两处发布链路遗留：CI 删除已失效的 vendor SDK 编译步骤（SDK 已走 npm），市场接口测试更新到 0.3.0 的 `invoke` 契约。
 
-[v0.1.2](https://github.com/otools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.1.2)（布局优化）、[v0.1.1](https://github.com/otools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.1.1)（首个市场版本）与 [v0.1.0](https://github.com/otools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.1.0)（开发预览）保持不变。
+[v0.1.3](https://github.com/ootools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.1.3)（日期筛选 · 区间清空）、[v0.1.2](https://github.com/ootools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.1.2)（布局优化）、[v0.1.1](https://github.com/ootools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.1.1)（首个市场版本）与 [v0.1.0](https://github.com/ootools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.1.0)（开发预览）保持不变。
 
 ## 使用与数据
 

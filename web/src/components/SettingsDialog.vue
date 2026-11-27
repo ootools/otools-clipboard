@@ -3,10 +3,11 @@ import { computed, ref, watch } from 'vue'
 import { ElButton, ElDialog, ElInput } from 'element-plus'
 import type { ClipboardSettings } from '../types'
 import type { ClipboardError } from '../api/errors'
-import type { Translate } from '../i18n/messages'
+import type { Locale, Translate } from '../i18n/messages'
 import ErrorNotice from './ErrorNotice.vue'
-const props = defineProps<{ open: boolean; settings: ClipboardSettings | null; busy: boolean; error: ClipboardError | null; t: Translate }>()
-const emit = defineEmits<{ close: []; save: [patch: Partial<ClipboardSettings>] }>()
+
+const props = defineProps<{ open: boolean; settings: ClipboardSettings | null; busy: boolean; error: ClipboardError | null; locale: Locale; theme: 'light' | 'dark'; t: Translate }>()
+const emit = defineEmits<{ close: []; save: [patch: Partial<ClipboardSettings>]; locale: []; theme: [] }>()
 const maxEntries = ref('500')
 const retentionDays = ref('30')
 const maxMiB = ref('256')
@@ -34,16 +35,24 @@ function save() {
 </script>
 
 <template>
-  <ElDialog :model-value="open" :title="t('settings')" width="min(460px, calc(100vw - 32px))" :close-on-click-modal="false" :close-on-press-escape="!busy" :show-close="!busy" @update:model-value="!$event && emit('close')">
-    <form class="flex flex-col gap-4" @submit.prevent="save">
-      <div class="grid grid-cols-2 gap-4">
-        <div><label for="max-entries" class="block text-xs mb-2">{{ t('maxEntries') }}</label><ElInput id="max-entries" v-model="maxEntries" inputmode="numeric" :disabled="busy || !settings" /></div>
-        <div><label for="retention-days" class="block text-xs mb-2">{{ t('retentionDays') }}</label><ElInput id="retention-days" v-model="retentionDays" inputmode="numeric" :disabled="busy || !settings" /></div>
+  <ElDialog :model-value="open" :title="t('settings')" custom-class="drawer-dialog" width="min(380px, calc(100vw - 32px))" :close-on-click-modal="false" :close-on-press-escape="!busy" :show-close="!busy" @update:model-value="!$event && emit('close')">
+    <form class="drawer-form" @submit.prevent="save">
+      <p class="drawer-subtitle">{{ t('settingsHelp') }}</p>
+      <div class="drawer-group">
+        <span class="drawer-group-title">{{ t('record') }}</span>
+        <div class="drawer-grid">
+          <div><label for="max-entries" class="drawer-label">{{ t('maxEntries') }}</label><ElInput id="max-entries" v-model="maxEntries" inputmode="numeric" :disabled="busy || !settings" /></div>
+          <div><label for="retention-days" class="drawer-label">{{ t('retentionDays') }}</label><ElInput id="retention-days" v-model="retentionDays" inputmode="numeric" :disabled="busy || !settings" /></div>
+        </div>
+        <div><label for="max-mib" class="drawer-label">{{ t('maxMiB') }}</label><ElInput id="max-mib" v-model="maxMiB" inputmode="decimal" :disabled="busy || !settings" /></div>
       </div>
-      <div><label for="max-mib" class="block text-xs mb-2">{{ t('maxMiB') }}</label><ElInput id="max-mib" v-model="maxMiB" inputmode="decimal" :disabled="busy || !settings" /></div>
-      <p class="m-0 text-xs leading-relaxed muted">{{ t('settingsHelp') }}</p>
-      <p class="m-0 text-xs warning-text">{{ t('settingsCleanupWarning') }}</p>
-      <p v-if="submitted && !valid" class="m-0 text-xs error-text" role="alert">{{ t('positiveInteger') }}</p>
+      <div class="drawer-group">
+        <span class="drawer-group-title">{{ t('appearance') }}</span>
+        <button type="button" class="drawer-row" data-action="set-locale" @click="emit('locale')"><span>{{ t('language') }}</span><span class="drawer-value">{{ locale === 'zh-CN' ? '简体中文' : 'English' }}</span></button>
+        <button type="button" class="drawer-row" data-action="set-theme" @click="emit('theme')"><span>{{ t('theme') }}</span><span class="drawer-value">{{ theme === 'dark' ? t('dark') : t('light') }}</span></button>
+      </div>
+      <p class="drawer-warning">{{ t('settingsCleanupWarning') }}</p>
+      <p v-if="submitted && !valid" class="drawer-error" role="alert">{{ t('positiveInteger') }}</p>
       <ErrorNotice v-if="error" :error="error" :t="t" compact />
     </form>
     <template #footer>

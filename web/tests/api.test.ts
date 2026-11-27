@@ -135,12 +135,11 @@ describe('native clipboard API boundary', () => {
   })
 
   it('uses the real current SDK shim to route official invoke syntax to the plugin identity', async () => {
+    // otools-plugin-sdk 0.3.0 的官方 shim 走 window.otools.invoke(command, payload)
+    // （apiVersion >= 2），插件身份由宿主根据调用上下文隐式确定，不再显式传 uuid。
     const oldApi = window.otools
     window.otools = {
-      invokeNative: async () => { throw new Error('unscoped native invoke should not run') },
-      getPluginUuid: () => 'otools-clipboard',
-      invokeNativePlugin: async (uuid: string, command: string, payload: unknown) => {
-        expect(uuid).toBe('otools-clipboard')
+      invoke: async (command: string, payload: unknown) => {
         expect(command).toBe('clipboard_list')
         expect(payload).toEqual({ kind: 'all', pinnedOnly: false, offset: 0, limit: 40 })
         return { items: [textItem], total: 1, offset: 0, limit: 40 }
