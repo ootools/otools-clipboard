@@ -1,5 +1,11 @@
 # 本次剪贴板插件验证记录
 
+日期：2026-11-27。v0.2.0（界面按功能重排）正式 Release 并上架市场，接口返回 code200，公开列表确认 version 0.2.0、minOToolsVersion 0.9.1、packageMode 1 与六架构包地址；版本历史新增 0.2.0 / 2026-11-27。宿主 0.9.1 由用户稍后发布；本次未发布宿主。
+
+v0.2.0 下载：[plugin-otools-clipboard-v0.2.0](https://github.com/ootools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.2.0)。本次仅前端视觉与交互壳改动，原生契约不变；发布使用提交 0f3eab9 的六架构 CI [45950327043](https://github.com/ootools/otools-clipboard/actions/runs/45950327043) 产物（web + 六架构 native + package 全绿），下载后独立校验清单、架构与 SHA256，六平台 verify 均 verified:true；Release 8 个资产（6 oplg + SHA256SUMS + logo.svg）远端摘要与本地一致。本地验证：Web 75/75、原生 26/26、脚本单测 12/12、类型检查与本机 macOS arm64 打包 verified:true。同步修复两处发布链路遗留：CI 删除已失效的 vendor SDK 编译步骤（SDK 已走 npm otools-plugin-sdk@^0.3.0，此前自 11-16 起 web job 连续失败），市场接口测试更新到 0.3.0 的 window.otools.invoke（apiVersion>=2）契约。
+
+## 历史记录
+
 日期：2026-11-14。v0.1.3（日期筛选、类型胶囊、区间清空）正式Release并上架市场，接口返回code200，公开列表确认version0.1.3、minOToolsVersion0.9.1、packageMode1与六架构包地址。宿主0.9.1由用户稍后发布；本次未发布宿主。
 
 v0.1.3下载：[plugin-otools-clipboard-v0.1.3](https://github.com/otools/otools-clipboard/releases/tag/plugin-otools-clipboard-v0.1.3)。本次原生代码有改动（list/clear时间窗），发布使用该版本提交 e337458 的六架构CI [43606503862](https://github.com/ootools/otools-clipboard/actions/runs/43606503862) 产物（全绿），下载后独立校验清单、架构与SHA256；Release远程摘要核验通过。市场上架前置校验沿用Release资产API摘要比对，令牌仅进程内使用、未输出。
